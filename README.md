@@ -1,5 +1,13 @@
 # aTrust Switch · aTrust 开关
 
+[![立即下载 Windows EXE](assets/download-exe.svg)](https://github.com/SUGE2016/atrust-switch/releases/latest/download/aTrustSwitch.exe)
+
+**[直接下载最新正式版 · aTrustSwitch.exe](https://github.com/SUGE2016/atrust-switch/releases/latest/download/aTrustSwitch.exe)** — 单文件，保存后直接运行。
+
+[发布说明](https://github.com/SUGE2016/atrust-switch/releases/latest) · [SHA256 校验文件](https://github.com/SUGE2016/atrust-switch/releases/latest/download/SHA256SUMS.txt) · [预发布版本](https://github.com/SUGE2016/atrust-switch/releases)
+
+适用于 64 位 Windows，需已安装 .NET Framework 4.x 和 aTrust + EAIO。
+
 <img src="assets/icon.png" width="88" alt="aTrust Switch 电源图标">
 
 **让“退出”终于有字面意思。** 一个 Windows 单文件小工具：需要时启动 aTrust，用完关闭服务、保活入口和残留进程，把网络和电脑的控制权交还给用户。
