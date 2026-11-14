@@ -18,7 +18,9 @@ aTrust Switch 送给这些后台“复活甲”一句话：**下班了，别给�
 
 ## 怎么用
 
-在 Windows 上[从源码构建](#从源码构建)，运行生成的 `aTrust开关.exe`。图标和界面已嵌入，分发时只需这一个 EXE；运行环境需要 Windows 的 .NET Framework 4.x，以及已安装的 aTrust、EAIO。
+从 [最新正式版](https://github.com/SUGE2016/atrust-switch/releases/latest) 下载附件 **aTrust开关.exe**，保存后直接运行。图标和界面已嵌入，只需这一个 EXE；运行环境需要 Windows 的 .NET Framework 4.x，以及已安装的 aTrust、EAIO。也可以[从源码构建](#从源码构建)。
+
+每个 Release 附有 `SHA256SUMS.txt`。用 PowerShell 的 `Get-FileHash .\aTrust开关.exe -Algorithm SHA256` 可核对下载文件。程序未做代码签名。
 
 | 操作 | 效果 |
 | --- | --- |
@@ -61,6 +63,14 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\test-render.ps1
 ```
 
 集成测试只启动并结束自己创建的模拟进程，不启停 aTrust/EAIO。界面检查会移动鼠标，需要空闲的交互桌面；截图需要人工检查。测试报告和截图写入 `artifacts/`，不会纳入 Git。
+
+## 自动发布
+
+推送到 `main` 后，GitHub Actions 会在 Windows 上运行基础测试、编译单文件 EXE，然后创建带提交号的 **预发布版**，附 EXE 和 SHA256 校验文件。每次推送独立发布；失败的测试或编译会阻止发布。预发布版不会替换“最新正式版”下载入口，已发布的旧版本保留。
+
+正式发布时，将 `VERSION`、`src/AssemblyInfo.cs` 和 `src/app.manifest` 的版本号同步更新，提交后创建并推送对应的 `vX.Y.Z` 标签。标签、VERSION 和 EXE 文件版本不一致时，发布会失败。版本标签触发正式 Release，并更新“最新正式版”入口。普通分支和 PR 不触发发布。
+
+CI 不安装厂商客户端，不能代替真实服务启停、网络和界面回归检查。所有自动产物的 Release 说明都包含源码提交及构建记录链接。
 
 ## 管理范围与备份
 
