@@ -18,9 +18,9 @@ aTrust Switch 送给这些后台“复活甲”一句话：**下班了，别给�
 
 ## 怎么用
 
-从 [最新正式版](https://github.com/SUGE2016/atrust-switch/releases/latest) 下载附件 **aTrust开关.exe**，保存后直接运行。图标和界面已嵌入，只需这一个 EXE；运行环境需要 Windows 的 .NET Framework 4.x，以及已安装的 aTrust、EAIO。也可以[从源码构建](#从源码构建)。
+从 [最新正式版](https://github.com/SUGE2016/atrust-switch/releases/latest) 下载附件 **aTrustSwitch.exe**，保存后直接运行。图标和界面已嵌入，只需这一个 EXE；运行环境需要 Windows 的 .NET Framework 4.x，以及已安装的 aTrust、EAIO。也可以[从源码构建](#从源码构建)。
 
-每个 Release 附有 `SHA256SUMS.txt`。用 PowerShell 的 `Get-FileHash .\aTrust开关.exe -Algorithm SHA256` 可核对下载文件。程序未做代码签名。
+每个 Release 附有 `SHA256SUMS.txt`。用 PowerShell 的 `Get-FileHash .\aTrustSwitch.exe -Algorithm SHA256` 可核对下载文件。程序未做代码签名。
 
 | 操作 | 效果 |
 | --- | --- |

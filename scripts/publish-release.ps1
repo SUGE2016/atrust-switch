@@ -8,6 +8,7 @@ if ($env:GITHUB_SHA -notmatch '^[0-9a-f]{40}$') { throw 'Missing or invalid comm
 if ($env:GITHUB_EVENT_NAME -ne 'push') { throw 'Only push events may publish.' }
 
 $exePath = Join-Path $repoRoot 'bin\aTrust开关.exe'
+$assetPath = Join-Path $repoRoot 'bin\aTrustSwitch.exe'
 $fileVersion = (Get-Item -LiteralPath $exePath).VersionInfo.FileVersion
 if ($fileVersion -ne "$version.0") { throw 'VERSION and executable file version must match.' }
 $hash = (Get-FileHash -LiteralPath $exePath -Algorithm SHA256).Hash.ToLowerInvariant()
@@ -32,7 +33,7 @@ $kind
 
 作者：新BUG主理人 · 许可证：MIT
 
-下载附件 aTrust开关.exe 即可运行；SHA256SUMS.txt 用于校验下载文件。程序未做代码签名。
+下载附件 aTrustSwitch.exe 即可运行；SHA256SUMS.txt 用于校验下载文件。程序未做代码签名。
 
 需要 64 位 Windows、.NET Framework 4.x 和默认路径安装的 aTrust + EAIO。服务操作会请求管理员权限。网络过滤驱动可能保持加载；EAIO 可能被其他软件共用。
 
@@ -46,7 +47,7 @@ $kind
 SHA256：$hash
 "@
 
-$releaseArgs = @('release', 'create', $tag, $exePath, $checksumPath,
+$releaseArgs = @('release', 'create', $tag, $assetPath, $checksumPath,
     '--repo', $env:GITHUB_REPOSITORY, '--target', $env:GITHUB_SHA,
     '--title', $title, '--notes-file', $notesPath)
 if ($isStable) { $releaseArgs += @('--verify-tag', '--latest') }
@@ -58,7 +59,20 @@ if ($PlanOnly) {
 }
 if ([string]::IsNullOrWhiteSpace($env:GH_TOKEN)) { throw 'GH_TOKEN is required to publish.' }
 $utf8 = New-Object System.Text.UTF8Encoding($false)
-[System.IO.File]::WriteAllText($checksumPath,($hash + '  aTrust开关.exe' + "`n"),$utf8)
+Copy-Item -LiteralPath $exePath -Destination $assetPath -Force
+[System.IO.File]::WriteAllText($checksumPath,($hash + '  aTrustSwitch.exe' + "`n"),$utf8)
 [System.IO.File]::WriteAllText($notesPath,$notes,$utf8)
 & gh @releaseArgs
 if ($LASTEXITCODE -ne 0) { throw 'GitHub Release creation failed.' }
+$releaseJson = & gh release view $tag --repo $env:GITHUB_REPOSITORY --json assets
+if ($LASTEXITCODE -ne 0) { throw 'Release verification failed.' }
+$release = $releaseJson | ConvertFrom-Json
+foreach ($assetFile in @($assetPath, $checksumPath)) {
+    $assetName = [System.IO.Path]::GetFileName($assetFile)
+    $remoteAsset = @($release.assets | Where-Object { $_.name -ceq $assetName })
+    $expectedDigest = 'sha256:' + (Get-FileHash -LiteralPath $assetFile -Algorithm SHA256).Hash.ToLowerInvariant()
+    if ($remoteAsset.Count -ne 1 -or $remoteAsset[0].digest -ne $expectedDigest) {
+        throw "Release asset name or digest mismatch: $assetName"
+    }
+}
+Write-Output 'Published assets verified by name and SHA256.'
